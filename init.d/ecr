@@ -1,0 +1,19 @@
+#!/bin/sh /etc/rc.common
+
+START=100
+STOP=150
+
+start() {
+       /usr/bin/node /www/ecr-app/index.js &
+        echo "We run NODEJS"
+        # commands to launch application
+}
+
+boot() {
+        start
+}
+
+stop() {
+        echo stop
+        # commands to kill application
+}
