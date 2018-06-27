@@ -7,8 +7,12 @@ EXTRA_COMMANDS="enable_firewall"
 EXTRA_HELP="        enable_firewall  Enable firewall redirects"
 
 start() {
-       /usr/bin/node /www/ecr-app/index.js &
+        /usr/bin/node /www/ecr-app/index.js &
         echo "We run NODEJS"
+        result="$(uci get firewall.@zone[1].forward)"
+        if [ "$result" != "ACCEPT" ]; then
+            enable_firewall
+        fi;
         # commands to launch application
 }
 
