@@ -9,6 +9,7 @@ EXTRA_HELP="        enable_firewall  Enable firewall redirects"
 start() {
         /usr/bin/node /www/ecr-app/index.js &
         echo "We run NODEJS"
+        logger "We run nodejs and firewall"
         result="$(uci get firewall.@zone[1].network)"
         if [ "$result" = "wwan" ]; then
             enable_firewall
