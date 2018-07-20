@@ -32,6 +32,7 @@ enable_firewall() {
         /sbin/uci add_list firewall.@zone[1].network='wwan'
         /sbin/uci add_list firewall.@zone[1].network='wan'
 		/sbin/uci add_list firewall.@zone[1].network='usb1'
+		/sbin/uci add_list firewall.@zone[1].network='bnep0'
         /sbin/uci delete firewall.@zone[0].network
         /sbin/uci add_list firewall.@zone[0].network='wlan'
         /sbin/uci add_list firewall.@zone[0].network='usb0'
