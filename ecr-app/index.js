@@ -1,5 +1,21 @@
 var http = require('http'),
     httpProxy = require('http-proxy');
+	
+var report = require('./report.js');
+
+var undefined;
+
+// Cash register IP address
+global.ip = "192.168.8.100"
+
+// Common error message if the type of the error isn't detected
+var commonErrorMessage = "Device is offline";
+
+// Global variable to check if the processing ability is locked
+global.isLocked = false;
+
+// Timeout interval to examine the cash register
+var interval = 3000;
 
 //
 // Create a proxy server with custom application logic
@@ -24,8 +40,40 @@ proxy.on('error', function (err, req, res) {
 var server = http.createServer(function(req, res) {
   // You can define here your custom logic to handle the request
   // and then proxy the request.
-  proxy.web(req, res, { target: 'http://192.168.8.100:80' });
+  proxy.web(req, res, { target: 'http://' + global.ip + ':80' });
 });
 
 //console.log("listening on port 5050")
 server.listen(5050);
+
+// Set IP address
+report.setIPAddress(global.ip);
+
+// Check periodically the status of the cash register
+setInterval(function () {
+	if (!global.isLocked) { 
+		global.isLocked = true;
+		try {
+			report.getCurrentANAFState().then(function (state) {
+				report.processANAFState(state).then(function (message) {
+					console.log(message);
+				}, function (errorMessage) {
+					if (errorMessage == undefined) {
+						errorMessage = commonErrorMessage;
+					}
+					console.log(errorMessage);
+				})
+				// Always handler
+					.then(function () {
+						global.isLocked = false;
+
+					});
+			}, function () {
+				console.log(commonErrorMessage);
+				global.isLocked = false; 
+			});
+		}
+		catch (ex) {}
+	}
+	
+}, interval);
